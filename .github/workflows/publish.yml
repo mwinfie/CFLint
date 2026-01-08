@@ -22,6 +22,9 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
       - name: Configure Maven for GitHub Packages
         run: |
           mkdir -p $HOME/.m2
@@ -39,8 +42,10 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
       - name: Publish to GitHub Packages Apache Maven
         run: mvn deploy
-        env:
+        env:secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor
           GITHUB_TOKEN: ${{ github.token }}
