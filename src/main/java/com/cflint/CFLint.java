@@ -131,6 +131,7 @@ public class CFLint implements IErrorReporter {
     private String environmentName="";
 	private Element currentElement = null;
     private boolean strictInclude;
+    private boolean skipIncludes = false;  // Skip recursive include processing to prevent exponential issue growth
     private Set<List<Object>> processed = new HashSet<>();
 
     // Stack to store include file depth to ensure no recursion
@@ -928,6 +929,11 @@ public class CFLint implements IErrorReporter {
                 handler.pop();
             } else if (expression instanceof CFIncludeStatement) {
                 scanExpression(expression, context, elem);
+                // Skip recursive include processing if skipIncludes flag is set
+                if (skipIncludes) {
+                    // Include processing disabled - prevents exponential issue growth from nested includes
+                    continue;
+                }
                 final CFExpression includeExpr = ((CFIncludeStatement) expression)
                         .getTemplate();
                 if(includeExpr instanceof CFStringExpression){
@@ -1695,6 +1701,10 @@ public class CFLint implements IErrorReporter {
 
     public void setStrictIncludes(final boolean strictInclude) {
         this.strictInclude = strictInclude;
+    }
+
+    public void setSkipIncludes(final boolean skipIncludes) {
+        this.skipIncludes = skipIncludes;
     }
     
     public void setEnvironmentName(String environmentName) {

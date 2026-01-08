@@ -44,6 +44,7 @@ public class CFLintAPI {
     private List<String> extensions = new ArrayList<>(Arrays.asList("cfc","cfm"));
     
     private boolean strictInclude;
+    private boolean skipIncludes = false;  // Skip recursive include processing
     private String environmentName;
 
 	final CFLintConfiguration configuration;
@@ -136,6 +137,7 @@ public class CFLintAPI {
             cflint.setQuiet(quiet);
             cflint.setDebug(debug);
             cflint.setStrictIncludes(strictInclude);
+            cflint.setSkipIncludes(skipIncludes);
             cflint.setEnvironmentName(environmentName);
             cflint.setAllowedExtensions(extensions);
             if(filterFile!=null){
@@ -269,6 +271,10 @@ public class CFLintAPI {
      */
     public void setStrictInclude(final boolean strictInclude) {
         this.strictInclude = strictInclude;
+    }
+
+    public void setSkipIncludes(final boolean skipIncludes) {
+        this.skipIncludes = skipIncludes;
     }
 
     /**
