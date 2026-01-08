@@ -81,7 +81,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.github.mwinfie</groupId>
+			<groupId>com.github.cfmleditor</groupId>
 			<artifactId>cfml.parsing</artifactId>
 			<version>${cfparser.version}</version>
 		</dependency>
