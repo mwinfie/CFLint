@@ -930,10 +930,7 @@ public class CFLint implements IErrorReporter {
             } else if (expression instanceof CFIncludeStatement) {
                 scanExpression(expression, context, elem);
                 // Skip recursive include processing if skipIncludes flag is set
-                if (skipIncludes) {
-                    // Include processing disabled - prevents exponential issue growth from nested includes
-                    continue;
-                }
+                if (!skipIncludes) {
                 final CFExpression includeExpr = ((CFIncludeStatement) expression)
                         .getTemplate();
                 if(includeExpr instanceof CFStringExpression){
@@ -971,6 +968,7 @@ public class CFLint implements IErrorReporter {
                         reportRule(currentElement, "Unable to resolve template value " + expression.getClass(), context,
                                 null, cm);
                     }
+                }
                 }
             } else {
                 scanExpression(expression, context, elem);
