@@ -420,12 +420,12 @@
 		<snapshotRepository>
 			<id>github</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/cfmleditor/cflint</url>
+			<url>https://maven.pkg.github.com/mwinfie/CFLint</url>
 		</snapshotRepository>
 		<repository>
 			<id>github</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/cfmleditor/cflint</url>
+			<url>https://maven.pkg.github.com/mwinfie/CFLint</url>
 		</repository>
 	</distributionManagement>
 </project>
