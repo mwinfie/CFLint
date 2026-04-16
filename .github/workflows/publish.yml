@@ -1,11 +1,16 @@
+# Publishes com.github.mwinfie:cflint to GitHub Packages on each push to the
+# skip-includes-fix branch (SNAPSHOT) and on release creation.
+
 name: Publish package to GitHub Packages
 
 on:
+  push:
+    branches: [ skip-includes-fix, master, main ]
   release:
     types: [created]
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -13,8 +18,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up JDK 11
+
+      - name: Set up JDK 11 with GitHub Packages
         uses: actions/setup-java@v4
         with:
           java-version: '11'
@@ -22,15 +27,9 @@ jobs:
           server-id: github
           server-username: GITHUB_ACTOR
           server-password: GITHUB_TOKEN
-      
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+
+      - name: Build and publish to GitHub Packages
+        run: mvn -B deploy -DskipTests
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
-      
-      - name: Publish to GitHub Packages
-        run: mvn deploy
-        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
