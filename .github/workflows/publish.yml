@@ -1,15 +1,16 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+# Publishes com.github.mwinfie:cflint to GitHub Packages on each push to the
+# skip-includes-fix branch (SNAPSHOT) and on release creation.
 
 name: Publish package to GitHub Packages
 
 on:
+  push:
+    branches: [ skip-includes-fix, master, main ]
   release:
     types: [created]
 
 jobs:
-  build:
-
+  publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,30 +18,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+
+      - name: Set up JDK 11 with GitHub Packages
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Configure Maven for GitHub Packages
-        run: |
-          mkdir -p $HOME/.m2
-          cat > $HOME/.m2/settings.xml <<EOF
-          <settings>
-            <servers>
-              <server>
-                <id>github</id>
-                <username>${{ secrets.GH_USERNAME }}</username>
-                <password>${{ secrets.GH_TOKEN }}</password>
-              </server>
-            </servers>
-          </settings>
-          EOF
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+          server-id: github
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
+      - name: Build and publish to GitHub Packages
+        run: mvn -B deploy -DskipTests
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: Publish to GitHub Packages Apache Maven
-        run: mvn deploy
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
