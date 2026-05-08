@@ -69,32 +69,14 @@ public class CFLintAPI {
      */
     public CFLintResult scan(final List<String> fileOrFolder) throws CFLintScanException, CFLintConfigurationException {
 
-        /* if ( this.threaded ) {
+        // Reset accumulated state before each scan so that reusing the same CFLintAPI
+        // instance across multiple per-file calls does not produce a triangular explosion
+        // of duplicate issues (file 1 bugs + file 2 bugs + ... + file N bugs written for
+        // every single file).
+        cflint.getBugs().clearBugList();
+        cflint.getStats().getCounts().clear();
 
-            List<Callable<Integer>> callableTasks = new ArrayList<>();
-            int numThreads = Runtime.getRuntime().availableProcessors();
-            ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
-            
-            for (final String scanfolder : fileOrFolder) {
-                Callable<Integer> callableTask = () -> {
-                    cflint.scan(scanfolder);
-                    return 1;
-                };
-                callableTasks.add(callableTask);
-            }
-
-            try {
-                executorService.invokeAll(callableTasks);
-                executorService.shutdown();
-                executorService.awaitTermination(2, TimeUnit.MINUTES);
-            } catch (InterruptedException e) {
-            }
-
-            for (final BugInfo bug : cflint.getBugs()) {
-                cflint.getStats().getCounts().add(bug.getMessageCode(), bug.getSeverity());
-            }
-        
-        } else { */
+        /* if ( this.threaded ) { ... } else { */
 
             for (final String scanfolder : fileOrFolder) {
                 cflint.scan(scanfolder);

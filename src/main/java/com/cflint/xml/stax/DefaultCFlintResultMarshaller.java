@@ -111,11 +111,11 @@ public class DefaultCFlintResultMarshaller implements CFLintResultMarshaller {
     }
 
     private void writeExpression(final XMLStreamWriter xtw, final BugInfo bug) throws XMLStreamException {
-        xtw.writeStartElement("Expression");
-
-        escapeDeep(xtw, valueOf(bug.getExpression()));
-
-        xtw.writeEndElement();
+        // <Expression> is not consumed by the SonarQube plugin importer and can be very large
+        // (e.g. full SQL queries or HTML blocks embedded in CFML expressions), contributing
+        // significantly to result XML bloat. It is omitted here intentionally.
+        // The standalone CLI output formats (XMLOutput, JSONOutput, TextOutput) handle
+        // expression output independently of this marshaller.
     }
 
     private void escapeDeep(final XMLStreamWriter xtw, final String data) throws XMLStreamException {

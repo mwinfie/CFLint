@@ -34,6 +34,12 @@ public class BugCounts {
         noBugs++;
     }
 
+    public void clear() {
+        severityCounts.clear();
+        codeCounts.clear();
+        noBugs = 0;
+    }
+
     public int noBugs() {
         return noBugs;
     }
