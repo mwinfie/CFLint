@@ -1,11 +1,12 @@
-# Publishes com.github.mwinfie:cflint to GitHub Packages on each push to the
-# skip-includes-fix branch (SNAPSHOT) and on release creation.
+# Publishes com.github.mwinfie:cflint to GitHub Packages.
+# - On push to master/main: publishes the current pom.xml version (should be X.Y.Z-SNAPSHOT)
+# - On release creation: sets the version to the release tag and publishes a release artifact
 
 name: Publish package to GitHub Packages
 
 on:
   push:
-    branches: [ skip-includes-fix, master, main ]
+    branches: [ master, main ]
   release:
     types: [created]
 
@@ -19,14 +20,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 11 with GitHub Packages
+      - name: Set up JDK 17 with GitHub Packages
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           server-id: github
           server-username: GITHUB_ACTOR
           server-password: GITHUB_TOKEN
+
+      - name: Set version from release tag
+        if: github.event_name == 'release'
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          # Strip leading 'v' if present (e.g. v1.5.10 -> 1.5.10)
+          VERSION="${TAG#v}"
+          echo "Setting pom version to $VERSION"
+          mvn -B versions:set -DnewVersion="$VERSION" -DgenerateBackupPoms=false
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to GitHub Packages
         run: mvn -B deploy -DskipTests
